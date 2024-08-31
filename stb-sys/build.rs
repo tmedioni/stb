@@ -33,15 +33,18 @@ fn main() {
         builder = builder.header(*f)
     }
     builder
-        .whitelist_function("stb.*")
-        .whitelist_type("stb.*")
-        .whitelist_var("stb.*")
+        .allowlist_function("stb.*")
+        .allowlist_type("stb.*")
+        .allowlist_var("stb.*")
+        .clang_arg("-include")
+        .clang_arg("string.h")
         .generate()
         .expect("Failed to generate bindings")
         .write_to_file(bindings_path)
         .expect("Failed to write bindings file");
 
     let mut builder = cc::Build::new();
+    builder.flag_if_supported("-Wno-implicit-function-declaration");
 
     #[cfg(feature = "stb_dxt")]
     {
